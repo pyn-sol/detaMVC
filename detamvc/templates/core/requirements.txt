@@ -1,0 +1,6 @@
+fastapi
+jinja2
+deta
+detamvc
+python-multipart
+python-dotenv

@@ -1,0 +1,17 @@
+{{% extends 'static_pages/templates/_base.html' %}}
+
+{{% block page_title %}} | Homepage{{% endblock %}}
+{{% block meta_description %}}This overwrites the meta description{{% endblock %}}
+
+{{% block content %}}
+
+<div class="container clearnav">
+    <div id="homepage">
+        <img src="{{{{ url_for('static', path='/img/logo.svg') }}}}">
+        <h1>{Obj}</h1>
+        <b>Built with DetaMVC</b><br>
+        <p>The fastest way to get to production.</p>
+    </div>  
+</div>
+
+{{% endblock %}}

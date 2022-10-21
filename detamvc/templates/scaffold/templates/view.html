@@ -1,0 +1,21 @@
+{{% extends 'static_pages/templates/_base.html' %}}
+
+{{% block page_title %}} | {Obj} | Show{{% endblock %}}
+{{% block meta_description %}}View a single {Obj} record.{{% endblock %}}
+
+{{% block content %}}
+
+<div class="container clearnav">
+    <a href="/{obj}" class="btn btn-sm btn-primary">Back</a>
+    <div class="card mt-5">
+        <div class="card-body">
+            {{% for k, v in {obj}.dict().items() %}}
+                <b>{{{{k}}}}</b> {{{{v}}}}<hr>
+            {{% endfor %}}
+            <a href="/{obj}/edit/{{{{{obj}.key}}}}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="/{obj}/delete/{{{{{obj}.key}}}}" class="btn btn-sm btn-danger">Delete</a>
+        </div>
+    </div>
+</div>
+
+{{% endblock %}}

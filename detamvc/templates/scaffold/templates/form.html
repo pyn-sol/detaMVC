@@ -1,0 +1,25 @@
+{{% extends 'static_pages/templates/_base.html' %}}
+
+{{% block page_title %}} | {Obj} | Form{{% endblock %}}
+{{% block meta_description %}}Create or Edit any {Obj}.{{% endblock %}}
+
+{{% block content %}}
+
+<div class="container clearnav">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/{obj}/{{{{ 'edit/' + vals.key if vals else 'new'}}}}" method="POST">
+
+{form_attrs}
+                        
+                        <input type="submit" value="Submit" class="btn btn-success">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{% endblock %}}
