@@ -23,14 +23,19 @@ def __builder(project_path, generator_path, format_attrs: dict, scaffold_obj_nam
                 o.write(__format(content, format_attrs))
 
 
-def build_base(p, project_name):
+def build_base(p, project_name, style):
     makedirs(p)
     content_attrs = {
         'Obj': project_name.title(),
         'project_key': config('project_key') or ''}
+
+    gen_path = 'core'
+    if style == 'MKDOCS':
+        gen_path = 'mkdocs_core'
+
     __builder(
         project_path=p, 
-        generator_path='templates/core', 
+        generator_path=f'templates/{gen_path}', 
         format_attrs=content_attrs)
 
 
@@ -58,7 +63,7 @@ def gen_scaffold(p, obj, attributes):
 def update_main(p, name):
     main_file = Path(p) / 'main.py'
     with open(main_file, 'r') as m:
-            main = m.readlines()
+        main = m.readlines()
     imp = f'from {name}.router import {name}_router\n'
     inc = f'app.include_router({name}_router, tags=["{name}"], prefix="/{name}")\n'
     imp_placement = 0

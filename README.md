@@ -1,23 +1,31 @@
-# DetaMVC
+![DetaMVC](https://detamvc.deta.dev/assets/images/detamvc.png)    
 
 
-DetaMVC is a framework for rapidly developing web applications using:
+**Documentation:** [https://detamvc.deta.dev](https://detamvc.deta.dev)  
+**Source Code:** [https://github.com/pyn-sol/detaMVC](https://github.com/pyn-sol/detaMVC)  
+
+
+DetaMVC is a framework for rapidly developing and deploying web applications using:
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [Jinja2](https://fastapi.tiangolo.com/advanced/templates/?h=jinja2)
-- [Deta](https://docs.deta.sh/docs/home)
-- [ODetaM](https://github.com/rickh94/ODetaM)
+- [Deta](https://docs.deta.sh/docs/home)  
+
 
 ## Work in Progress
 Please note that DetaMVC is a work in progress currently. Some planned updates include:
 - Support for exotic data types when scaffolding
 - Implement Deta Auth when available
-- Generate with other front ends ? (may take significant restructuring)
+- Generate with other front ends
 
 ## Installation
 ```
 pip install detamvc
 ```
-   
+
+Other Requirements:
+- A Deta Account. If you do not have one, go to [Deta](https://www.deta.sh/) and click 'Join Deta'
+- The [Deta CLI](https://docs.deta.sh/docs/cli/install)
+
 
 ## Basics
 If you are familiar with Ruby on Rails, the commands are very similar for creating an application. 
@@ -30,7 +38,7 @@ cd project
 detamvc scaffold item name:str description:text price:float quantity:int available:bool
 ```
 
-Before running your project, be sure to set your PROJECT_KEY for Deta. You can get this from your dashboard under 'settings'.
+Before running your project, be sure to set your PROJECT_KEY for Deta. You can get this from your Deta dashboard under 'settings'.
 
 
 ```
@@ -43,7 +51,7 @@ Or, save yourself the hassle and set your development project key using the comm
 detamvc set-project-key #######_#################
 ```
 
-**NOTE**: Deta Base is used as your database. I would strongly recommend creating a new Project called 'development' where you can play around with ideas while building. When you go to production, create a new project in Deta for this to be managed in.
+**NOTE**: Deta Base is used as your database. We recommend creating a new Project called 'development' where you can play around with ideas while building. When you go to production, create a new project in Deta for this to be managed in.
 
 ## Run a Server Manually
 
