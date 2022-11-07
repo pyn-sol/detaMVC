@@ -6,7 +6,6 @@ from mimetypes import guess_type
 
 app = FastAPI(docs_url=None, redoc_url=None)
 app.mount("/assets", StaticFiles(directory="site/assets"), name="assets")
-app.mount("/stylesheets", StaticFiles(directory="site/stylesheets"), name="stylesheets")
 app.mount("/search", StaticFiles(directory="site/search"), name="search")
 
 
