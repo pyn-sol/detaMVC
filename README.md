@@ -11,12 +11,6 @@ DetaMVC is a framework for rapidly developing and deploying web applications usi
 - [Deta](https://docs.deta.sh/docs/home)  
 
 
-## Work in Progress
-Please note that DetaMVC is a work in progress currently. Some planned updates include:
-- Support for exotic data types when scaffolding
-- Implement Deta Auth when available
-- Generate with other front ends
-
 ## Installation
 ```
 pip install detamvc
@@ -50,8 +44,6 @@ Or, save yourself the hassle and set your development project key using the comm
 ```
 detamvc set-project-key #######_#################
 ```
-
-**NOTE**: Deta Base is used as your database. We recommend creating a new Project called 'development' where you can play around with ideas while building. When you go to production, create a new project in Deta for this to be managed in.
 
 ## Run a Server Manually
 
