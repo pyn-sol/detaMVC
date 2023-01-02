@@ -1,6 +1,8 @@
 from pathlib import Path
 from os import walk, makedirs
+from secrets import token_urlsafe
 from .utilities import config
+
 
 
 def __builder(project_path, generator_path, format_attrs: dict, scaffold_obj_name=''):
@@ -60,21 +62,86 @@ def gen_scaffold(p, obj, attributes):
     update_main(p, obj)
 
 
-def update_main(p, name):
+def gen_authlib(p):
+    obj = 'user'
+    format_attrs = {
+        'proj': Path.cwd().name,
+        'obj': obj, 
+        'Obj': obj.title() }
+
+    __builder(
+        project_path=p, 
+        generator_path='templates/authlib_users', 
+        format_attrs=format_attrs,
+        scaffold_obj_name=obj)
+
+    update_main(
+        p, 
+        obj, 
+        extra_imports=[
+            'from starlette.middleware.sessions import SessionMiddleware\n',
+            'from os import environ\n'],
+        extra_includes=[
+            'app.add_middleware(SessionMiddleware, secret_key=environ.get("APP_SECRET"))\n'])
+
+    update_requirements(
+        p,
+        reqs=['itsdangerous', 'httpx', 'Authlib'])
+    
+    update_env(
+        p,
+        APP_SECRET=token_urlsafe(16),
+        GOOGLE_CLIENT_ID="GET_CLIENT_ID",
+        GOOGLE_CLIENT_SECRET="GET_CLIENT_SECRET"
+    )
+
+
+def update_main(
+    p, 
+    name,
+    extra_imports: list = None, 
+    extra_includes: list = None
+):
     main_file = Path(p) / 'main.py'
     with open(main_file, 'r') as m:
         main = m.readlines()
-    imp = f'from {name}.router import {name}_router\n'
-    inc = f'app.include_router({name}_router, tags=["{name}"], prefix="/{name}")\n'
+    imp = [f'from {name}.router import {name}_router\n']
+    inc = [f'app.include_router({name}_router, tags=["{name}"], prefix="/{name}")\n']
+    if extra_imports:
+        imp += extra_imports
+    if extra_includes:
+        inc += extra_includes
     imp_placement = 0
     for i, line in enumerate(main):
         if '_router' in line and 'import' in line:
             imp_placement = i + 1
-    main.insert(imp_placement, imp)
-    main.append(inc)
+    main.insert(imp_placement, ''.join(imp))
+    main.append(''.join(inc))
 
     with open(main_file, 'w') as m:
         m.write(''.join(main))
+
+
+def update_requirements(p, reqs: list):
+    req_file = Path(p) / 'requirements.txt'
+    with open(req_file, 'r') as m:
+        file_reqs = m.readlines()
+    
+    file_reqs.insert(0, '\n'.join(reqs) + '\n')
+    
+    with open(req_file, 'w') as o:
+        o.write(''.join(file_reqs))
+
+
+def update_env(p, **kwargs):
+    env_file = Path(p) / '.env'
+    with open(env_file, 'r') as e:
+        file_env = e.readlines()
+    file_env += [
+        f"{k}={v}"
+        for k, v in kwargs.items()]
+    with open(env_file, 'w') as o:
+        o.write('\n'.join(file_env))
 
 
 def __format(doc, attr_dict):
@@ -95,6 +162,7 @@ def __get_object_attrs(attributes):
         s = a.split(':')
         obj_attrs[s[0]] = 'str' if len(s) == 1 else s[1].lower()
     return obj_attrs
+
 
 def __create_form_attrs(attributes, helpers_path):
     helpers_path = Path(__file__).parent.resolve() / helpers_path

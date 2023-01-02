@@ -1,0 +1,21 @@
+{{% extends 'static_pages/templates/_base.html' %}}
+
+{{% block page_title %}} | Not Authorized{{% endblock %}}
+{{% block meta_description %}}Create or Edit any User.{{% endblock %}}
+
+{{% block content %}}
+
+<div class="container clearnav">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <p>The page you are trying to go to requires authentication. Please login.</p>
+                    <a href="/{obj}/login">login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{% endblock %}}

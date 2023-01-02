@@ -1,7 +1,7 @@
 import typer
 import os
 from detamvc import __version__
-from .generator import build_base, gen_scaffold
+from .generator import build_base, gen_scaffold, gen_authlib
 from typing import List
 from . import utilities as utils
 
@@ -51,6 +51,16 @@ def scaffold(obj: str, attributes: List[str]):
         typer.secho(f"\nScaffolding views and router for: {obj}\n", fg='green')
         gen_scaffold(os.curdir, obj, attributes)
         typer.echo(f"\n{obj} was created.\n")
+
+@app.command()
+def auth():
+    """ generate authorization framework for users """
+    if utils.check_project_type() == "MKDOCS":
+        typer.secho(f"User Auth is not currently supported for MKDOCS styled apps", fg='red')
+    else:
+        typer.secho(f"\nGenerating views and router for: User\n", fg='green')
+        gen_authlib(os.curdir)
+        typer.echo(f"\nAuth was created.\n")
 
 @app.command()
 def set_project_key(project_key: str):
