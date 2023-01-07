@@ -1,7 +1,7 @@
 from pathlib import Path
 from os import walk, makedirs
 from secrets import token_urlsafe
-from .utilities import config
+from detamvc.utilities import config
 
 
 """

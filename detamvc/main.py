@@ -1,9 +1,9 @@
 import typer
 import os
 from detamvc import __version__
-from .generator import build_base, gen_scaffold, gen_authlib
+from detamvc.generator import build_base, gen_scaffold, gen_authlib
 from typing import List
-from . import utilities as utils
+import detamvc.utilities as utils
 
 app = typer.Typer()
 
