@@ -25,7 +25,9 @@ def new(project: str, style: str = "bootstrap"):
         except FileExistsError:
             typer.secho(f"'{project}' already exists in this folder.\n", fg='red')
     else:
-        typer.secho(f"'{style}' is not a valid style for a project. Valid options are: {utils.STYLES}", fg='red')
+        typer.secho(
+            f"'{style}' is not a valid style for a project. "
+            "Valid options are: {utils.STYLES}", fg='red')
 
 @app.command()
 def server():
