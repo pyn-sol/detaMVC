@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 from os import walk, makedirs
 from secrets import token_urlsafe
@@ -188,7 +189,7 @@ def gen_scaffold(p: str, obj: str, attributes: list) -> None:
         generator_path='templates/scaffold', 
         format_attrs=format_attrs,
         scaffold_obj_name=obj)
-    update_main(p, obj)
+    update(add_to_main(p, obj))
 
 
 def gen_authlib(p: str) -> None:
@@ -212,36 +213,45 @@ def gen_authlib(p: str) -> None:
         generator_path='templates/authlib_users', 
         format_attrs=format_attrs,
         scaffold_obj_name=obj)
-    update_main(
+    update(add_to_main(
         p, 
         obj, 
         extra_imports=[
             'from starlette.middleware.sessions import SessionMiddleware\n',
             'from os import environ\n'],
         extra_includes=[
-            'app.add_middleware(SessionMiddleware, secret_key=environ.get("APP_SECRET"))\n'])
-    update_requirements(
+            'app.add_middleware(SessionMiddleware, secret_key=environ.get("APP_SECRET"))\n']))
+    update(add_to_requirements(
         p,
-        reqs=['itsdangerous', 'httpx', 'Authlib'])
-    update_env(
+        reqs=['itsdangerous', 'httpx', 'Authlib']))
+    update(add_to_env(
         p,
         APP_SECRET=token_urlsafe(16),
         GOOGLE_CLIENT_ID="GET_CLIENT_ID",
-        GOOGLE_CLIENT_SECRET="GET_CLIENT_SECRET")
+        GOOGLE_CLIENT_SECRET="GET_CLIENT_SECRET"))
 
 
 """
 UPDATERS
 """
+@dataclass 
+class File:
+    filepath: str 
+    content: str
+    mode: str = 'w'
 
 
-def update_main(
+def update(file: File):
+    with open(file.filepath, file.mode) as m:
+        m.write(file.content)
+
+def add_to_main(
     p: str, 
     name: str,
     extra_imports: list or None = None, 
     extra_includes: list or None = None
-) -> None:
-    """Updates the main router with the scaffold router imports.  
+) -> File:
+    """Adds provided data to the main router with the scaffold router imports.  
 
     When a new scaffolded MVC is added to the project, the router for
     it should be added to main.py. This method will import the router 
@@ -253,6 +263,9 @@ def update_main(
         name (str): name of the router to include.  
         extra_imports (listorNone, optional): additional imports to include. Defaults to None.  
         extra_includes (listorNone, optional): additional lines of code to include. Defaults to None.
+    
+    Return:
+        File: the updated file and metadata
     """
     main_file = Path(p) / 'main.py'
     with open(main_file, 'r') as m:
@@ -265,34 +278,42 @@ def update_main(
         __get_import_placement(main), 
         ''.join(imprt))
     main.append(''.join(incld))
+    return File(
+        filepath=main_file, 
+        content=''.join(main), 
+        mode='w')
 
-    with open(main_file, 'w') as m:
-        m.write(''.join(main))
 
-
-def update_requirements(p: str, reqs: list) -> None:
-    """Update the requirements file at the specified path with the provided requirements.  
+def add_to_requirements(p: str, reqs: list) -> File:
+    """Adds provided data to the requirements file at the specified path with the provided requirements.  
 
     Args:
         p (str): The path to the directory containing the requirements file.  
         reqs (list): A list of requirements to be added to the requirements 
+        
+    Return:
+        File: the updated file and metadata
     """
     req_file = Path(p) / 'requirements.txt'
     with open(req_file, 'r') as m:
         file_reqs = m.readlines()
     
     file_reqs.insert(0, '\n'.join(reqs) + '\n')
-    
-    with open(req_file, 'w') as o:
-        o.write(''.join(file_reqs))
+    return File(
+        filepath=req_file, 
+        content=''.join(file_reqs), 
+        mode='w')
 
 
-def update_env(p: str, **kwargs) -> None:
-    """Update the env file at the specified path with the provided variables.  
+def add_to_env(p: str, **kwargs) -> File:
+    """Adds provided data to the env file at the specified path with the provided variables.  
 
     Args:
         p (str): The path to the directory containing the env file.  
         kwargs: key and value for each entry 
+        
+    Return:
+        File: the updated file and metadata
     """
     env_file = Path(p) / '.env'
     with open(env_file, 'r') as e:
@@ -300,5 +321,7 @@ def update_env(p: str, **kwargs) -> None:
     file_env += [
         f"{k}={v}"
         for k, v in kwargs.items()]
-    with open(env_file, 'w') as o:
-        o.write('\n'.join(file_env))
+    return File(
+        filepath=env_file, 
+        content='\n'.join(file_env), 
+        mode='w')
