@@ -1,18 +1,12 @@
 from fastapi import APIRouter, Request
-from detamvc.model import DetaModel
-
 from fastapi.templating import Jinja2Templates
+
+from {obj}.model import {Obj}
 
 
 {obj}_router = APIRouter()
 templates = Jinja2Templates(directory="")
 
-
-class {Obj}(DetaModel):
-    {model_attrs}
-
-    class Config:
-        table_name = "{proj}_{obj}"
 
 # INDEX
 @{obj}_router.get('/')
