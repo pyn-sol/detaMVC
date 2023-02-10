@@ -8,4 +8,4 @@ templates = Jinja2Templates(directory="")
 def index(request: Request):
     return templates.TemplateResponse(
         'static_pages/templates/index.html',
-        context={'request': request })
+        context={{'request': request }})

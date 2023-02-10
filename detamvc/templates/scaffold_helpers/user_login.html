@@ -1,0 +1,22 @@
+{% if request.session.user %}
+
+<li class="{{nav_li_class}}">
+    <a class="{{nav_a_class}}{{' active' if 'user/dashboard' in request.url.path}}" href="/user/dashboard">
+        Dashboard
+    </a>
+</li>
+<li class="{{nav_li_class}}">
+    <a class="{{nav_a_class}}" href="/user/logout">
+        Logout
+    </a>
+</li>
+
+{% else %}
+
+<li class="{{nav_li_class}}">
+    <a class="{{nav_a_class}}{{' active' if 'user/login' in request.url.path}}" href="/user/login">
+        Login
+    </a>
+</li>
+
+{% endif %}

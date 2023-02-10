@@ -57,8 +57,7 @@ def __format(doc: str, attr_dict: dict) -> str:
     for k, v in attr_dict.items():
         if f'{{{k}}}' in doc:
             built_attrs.update({k: v})
-    if built_attrs:
-        doc = doc.format(**built_attrs)
+    doc = doc.format(**built_attrs)
     return doc
 
 
@@ -90,7 +89,7 @@ def __prepare_model_attrs(obj_attrs: dict) -> str:
         str: prepared attributes as string
     """
     model_attrs = [
-        f"{k}: {'str' if v == 'text' else v}" 
+        f"{k}: {'str' if v in ('text', 'wysiwyg') else v}" 
         for k, v in obj_attrs.items()]
     return '\n    '.join(model_attrs)
 
@@ -117,6 +116,13 @@ def __create_form_attrs(attributes: dict, helpers_path: str) -> str:
         format_attrs = {'f': f, 'F': f.title()}
         form_fields.append(__format(content, format_attrs))
     return '\n'.join(form_fields)
+
+def __add_wysiwyg_meta(take_action: bool):
+    if take_action:
+        with open(Path(__file__).parent.resolve() 
+                  / 'templates/scaffold_helpers/trix_meta_content.html', 
+                  'r') as o:
+            return o.read()
 
 
 def __get_import_placement(main_py: list) -> int:
@@ -183,13 +189,23 @@ def gen_scaffold(p: str, obj: str, attributes: list) -> None:
         'model_attrs': __prepare_model_attrs(obj_attrs), 
         'form_attrs': __create_form_attrs(
             attributes=obj_attrs, 
-            helpers_path='templates/scaffold_helpers')}
+            helpers_path='templates/scaffold_helpers'),
+        'wysiwyg': __add_wysiwyg_meta('wysiwyg' in obj_attrs.values())}
     __builder(
         project_path=p, 
         generator_path='templates/scaffold', 
         format_attrs=format_attrs,
         scaffold_obj_name=obj)
     update(add_to_main(p, obj))
+
+    
+
+    with open(Path(__file__).parent.resolve() / 'templates/scaffold_helpers/scaffold_navlink.html', 'r') as o:
+        scaffold_link = __format(o.read(), format_attrs)
+
+    update(add_to_navlinks(
+        p,
+        content=scaffold_link))
 
 
 def gen_authlib(p: str) -> None:
@@ -223,12 +239,19 @@ def gen_authlib(p: str) -> None:
             'app.add_middleware(SessionMiddleware, secret_key=environ.get("APP_SECRET"))\n']))
     update(add_to_requirements(
         p,
-        reqs=['itsdangerous', 'httpx', 'Authlib']))
+        reqs=['itsdangerous', 'httpx', 'Authlib', 'pyjwt', 'passlib[bcrypt]']))
     update(add_to_env(
         p,
-        APP_SECRET=token_urlsafe(16),
-        GOOGLE_CLIENT_ID="GET_CLIENT_ID",
-        GOOGLE_CLIENT_SECRET="GET_CLIENT_SECRET"))
+        APP_SECRET='D' + token_urlsafe(16),
+        GOOGLE_CLIENT_ID="",
+        GOOGLE_CLIENT_SECRET=""))
+    
+    with open(Path(__file__).parent.resolve() / 'templates/scaffold_helpers/user_login.html', 'r') as o:
+        user_links = o.read()
+
+    update(add_to_navlinks(
+        p,
+        content=user_links))
 
 
 """
@@ -324,4 +347,14 @@ def add_to_env(p: str, **kwargs) -> File:
     return File(
         filepath=env_file, 
         content='\n'.join(file_env), 
+        mode='w')
+
+
+def add_to_navlinks(p: str, content: str):
+    navlink_file = Path(p) / 'static_pages' / 'templates' / '_navlinks.html'
+    with open(navlink_file, 'r') as e:
+        file_navlink = e.read()
+    return File(
+        filepath=navlink_file,
+        content=file_navlink + '\n\n' + content,
         mode='w')

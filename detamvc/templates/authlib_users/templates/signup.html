@@ -1,0 +1,98 @@
+{{% extends 'static_pages/templates/_base.html' %}}
+
+{{% block page_title %}}User Signup | {{% endblock %}}
+{{% block meta_description %}}Sign up to use this application.{{% endblock %}}
+
+{{% block content %}}
+
+<div class="row m-0 justify-content-center">
+  <div class="col-xl-4">
+    <main class="m-auto text-center p-5 mt-3" style="max-width: 500px">
+      <form  action="/user/signup" method="POST">
+        <img class="mb-4" src="{{{{url_for('static', path='/img/logo.svg')}}}}" 
+             alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Sign up</h1>
+
+        <div class="form-floating mb-1">
+          <input type="text" class="form-control" id="username" 
+                 placeholder="Username" name="username" autocomplete="off">
+          <label for="username">Username</label>
+        </div>
+
+        <div class="form-floating mb-1">
+          <input type="password" class="form-control" id="password" 
+                 placeholder="Password" name="password">
+          <label for="password">Password</label>
+        </div>
+
+        <div class="form-floating mb-1">
+          <input type="password" class="form-control" id="passwordconfirm" 
+                 placeholder="Confirm Password" name="password">
+          <label for="passwordconfirm">Confirm Password</label>
+        </div>
+
+        <span id="alerting"></span>
+
+        <button class="w-100 btn btn-lg btn-primary mt-3" 
+                type="submit" id="submit" disabled>
+            Sign up
+        </button>
+      </form>
+      
+      <p class="mt-5 mb-3 text-muted">
+        <a href="/user/login" class="btn btn-sm btn-secondary">Log In</a>
+      </p>
+    </main>
+  </div>
+</div>
+
+<script>
+
+  function delay(callback, ms) {{
+    var timer = 0;
+    return function() {{
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {{
+        callback.apply(context, args);
+      }}, ms || 0);
+    }};
+  }}
+
+
+  document.querySelector('#passwordconfirm').addEventListener('keyup', function (e) {{
+    var pass = document.getElementById('password').value;
+    var confirm_pass = document.getElementById('passwordconfirm').value;
+    var alrt = document.getElementById('alerting');
+    var submitBtn = document.getElementById('submit');
+    if (pass != confirm_pass) {{
+        alrt.style.color = 'red';
+        alrt.innerHTML = '☒ Passwords do not match';
+        submitBtn.disabled = true;
+    }} else {{
+        alrt.style.color = 'green';
+        alrt.innerHTML = '🗹 Passwords Match';
+        submitBtn.disabled = false;
+    }}
+  }})
+
+  document.querySelector('#username').addEventListener('keyup', delay(function (e) {{
+    var username = document.getElementById('username').value;
+    var alrt = document.getElementById('alerting');
+
+    fetch(`/user/username_available?u=${{username}}`)
+      .then((response) => response.json())
+      .then((available) => {{
+        if (available) {{
+          alrt.style.color = 'green';
+          alrt.innerHTML = '🗹 Username Available';
+        }} else {{
+          alrt.style.color = 'red';
+          alrt.innerHTML = '☒ Username not available';
+        }}
+      }});
+  }}, 500))
+
+</script>
+
+{{% endblock %}}

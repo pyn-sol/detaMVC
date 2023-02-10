@@ -1,13 +1,13 @@
 {{% extends 'static_pages/templates/_base.html' %}}
 
-{{% block page_title %}} | Homepage{{% endblock %}}
-{{% block meta_description %}}This overwrites the meta description{{% endblock %}}
+{{% block page_title %}}Home | {{% endblock %}}
+{{% block meta_description %}}{Obj} was built with DetaMVC - the fastest way to get to production!{{% endblock %}}
 
 {{% block content %}}
 
-<div class="container clearnav">
-    <div id="homepage">
-        <img src="{{{{ url_for('static', path='/img/logo.svg') }}}}">
+<div class="container mt-5">
+    <div class="text-center">
+        <img src="{{{{ url_for('static', path='/img/logo.svg') }}}}" class="mb-3">
         <h1>{Obj}</h1>
         <b>Built with DetaMVC</b><br>
         <p>The fastest way to get to production.</p>

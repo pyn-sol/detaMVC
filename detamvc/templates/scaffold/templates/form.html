@@ -1,20 +1,24 @@
 {{% extends 'static_pages/templates/_base.html' %}}
 
-{{% block page_title %}} | {Obj} | Form{{% endblock %}}
+{{% block page_title %}}{Obj} Form | {{% endblock %}}
 {{% block meta_description %}}Create or Edit any {Obj}.{{% endblock %}}
+
+{wysiwyg}
 
 {{% block content %}}
 
-<div class="container clearnav">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
+                    <h5 class="card-title mb-3">{{{{'Edit' if vals else 'New'}}}} {Obj}</h5>
                     <form action="/{obj}/{{{{ 'edit/' + vals.key if vals else 'new'}}}}" method="POST">
 
 {form_attrs}
                         
-                        <input type="submit" value="Submit" class="btn btn-success">
+                        <input type="submit" value="Submit" class="btn btn-success mt-3">
+                        <a href="/{obj}/{{{{ vals.key }}}}" class="btn btn-light mt-3">Cancel</a>
                     </form>
                 </div>
             </div>

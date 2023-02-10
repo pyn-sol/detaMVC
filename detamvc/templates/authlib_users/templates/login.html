@@ -1,0 +1,55 @@
+{{% extends 'static_pages/templates/_base.html' %}}
+
+{{% block page_title %}}User Login | {{% endblock %}}
+{{% block meta_description %}}Please login.{{% endblock %}}
+
+{{% block content %}}
+
+<div class="row m-0 justify-content-center">
+  <div class="col-xl-4">
+    <main class="m-auto text-center p-5 mt-3" style="max-width: 500px">
+      <form  action="/user/login" method="POST">
+        <img class="mb-4" src="{{{{url_for('static', path='/img/logo.svg')}}}}"
+             alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Log in</h1>
+
+        <div class="form-floating mb-1">
+          <input type="text" class="form-control" id="floatingInput"
+                 placeholder="Username" name="username">
+          <label for="floatingInput">Username</label>
+        </div>
+
+        <div class="form-floating mb-1">
+          <input type="password" class="form-control" id="floatingPassword"
+                 placeholder="Password" name="password">
+          <label for="floatingPassword">Password</label>
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary mt-3"
+                type="submit" id="submit">
+            Sign in
+        </button>
+      </form>
+      
+      {{% if continue_with_google %}}
+      <a href="/user/google_login" class="w-100 btn btn-sm btn-light mt-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="24" width="24">
+          <path fill="#4285f4" d="M386 400c45-42 65-112 53-179H260v74h102c-4 24-18 44-38 57z"></path>
+          <path fill="#34a853" d="M90 341a192 192 0 0 0 296 59l-62-48c-53 35-141 22-171-60z"></path>
+          <path fill="#fbbc02" d="M153 292c-8-25-8-48 0-73l-63-49c-23 46-30 111 0 171z"></path>
+          <path fill="#ea4335" d="M153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55z"></path>
+        </svg>&emsp;
+        Continue with Google
+      </a>
+      {{% endif %}}
+      
+      <p class="mt-5 mb-3">
+        <a href="/user/signup" class="btn btn-sm btn-secondary">Sign Up</a> <br> 
+      </p>
+
+    </main>
+  </div>
+</div>
+
+
+{{% endblock %}}

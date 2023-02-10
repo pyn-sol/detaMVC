@@ -1,6 +1,21 @@
-.clearnav{
-    padding-top: 5rem;
-}
-#homepage{
-    text-align: center;
-}
+.alert {{
+    position: absolute;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 600px; 
+    max-width: 100%
+}}
+
+.bi {{
+    width: 1em;
+    height: 1em;
+    vertical-align: -.125em;
+    fill: currentcolor
+}}
+
+.dmvc-navbar {{
+    background-color: rgb(var(--bs-body-bg-rgb));
+    border-bottom: 1px solid rgba(var(--bs-body-color-rgb), 0.1)
+}}

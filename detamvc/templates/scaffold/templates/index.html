@@ -1,11 +1,11 @@
 {{% extends 'static_pages/templates/_base.html' %}}
 
-{{% block page_title %}} | {Obj} | Index{{% endblock %}}
+{{% block page_title %}}{Obj} Index | {{% endblock %}}
 {{% block meta_description %}}View a list of all {Obj} records.{{% endblock %}}
 
 {{% block content %}}
 
-<div class="container clearnav">
+<div class="container mt-5">
     <h1>{Obj} Index</h1>
     <a href="/{obj}/new" class="btn btn-success">New {Obj}</a>
     <div class="row pt-3">
@@ -13,7 +13,7 @@
         <div class="col-md-4">
             <div class="card m-2">
                 <div class="card-body">
-                    <p>{{{{{obj}}}}}</p>
+                    <p>{{{{ {obj}.get_attribute_value(1) }}}}</p>
                     <a href="/{obj}/{{{{{obj}.key}}}}" class="btn btn-sm btn-primary">View</a>
                 </div>
             </div>

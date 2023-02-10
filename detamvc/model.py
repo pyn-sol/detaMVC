@@ -8,9 +8,24 @@ import ujson
 from deta import Deta
 from pydantic import Field, BaseModel, ValidationError
 
-from odetam.exceptions import NoProjectKey, DetaError, ItemNotFound
 from odetam.field import DetaField
 from odetam.query import DetaQuery, DetaQueryStatement, DetaQueryList
+
+
+class DetaError(BaseException):
+    pass
+
+
+class ItemNotFound(DetaError):
+    pass
+
+
+class NoProjectKey(DetaError):
+    pass
+
+
+class InvalidDetaQuery(DetaError):
+    pass
 
 
 DETA_BASIC_TYPES = [dict, list, str, int, float, bool]
@@ -19,6 +34,13 @@ DETA_BASIC_LIST_TYPES = [
     List[type_] for type_ in DETA_BASIC_TYPES + DETA_OPTIONAL_TYPES
 ]
 DETA_TYPES = DETA_BASIC_TYPES + DETA_OPTIONAL_TYPES + DETA_BASIC_LIST_TYPES
+
+
+class Alert:
+    """Use this class to make alerts on any page"""
+    def __init__(self, message = None, alert_type = 'danger'):
+        self.type = alert_type
+        self.message = message
 
 
 def handle_db_property(cls, deta_class):
@@ -31,7 +53,7 @@ def handle_db_property(cls, deta_class):
     except (AttributeError, AssertionError, ValueError):
         raise NoProjectKey(
             "Ensure that the 'DETA_PROJECT_KEY' environment variable is set to your "
-            "project key"
+            "project key and then restart the server."
         )
     cls._db = deta.Base(cls.__db_name__)
     return cls._db
@@ -40,6 +62,7 @@ def handle_db_property(cls, deta_class):
 class DetaModelMetaClass(pydantic.main.ModelMetaclass):
     def __new__(mcs, name, bases, dct):
         cls = super().__new__(mcs, name, bases, dct)
+        cls.Config.arbitrary_types_allowed = True  # but, be careful if you use them!
         if getattr(cls.Config, "table_name", None):
             cls.__db_name__ = cls.Config.table_name
         else:
@@ -98,8 +121,8 @@ class BaseDetaModel(BaseModel):
         for field_name, field in cls.__fields__.items():
             # this originally failed when 0, 0.0, or False. Now we only check for None instances
             if field_name not in data:
-                continue
-            if field.type_ in DETA_TYPES:
+                as_dict[field_name] = field.type_()
+            elif field.type_ in DETA_TYPES:
                 as_dict[field_name] = data[field_name]
             elif field.type_ == datetime.datetime:
                 as_dict[field_name] = datetime.datetime.fromtimestamp(data[field_name])
@@ -203,6 +226,13 @@ class DetaModel(BaseDetaModel, metaclass=DetaModelMetaClass):
         saved = self._db_put(self._serialize(), expire_in, expire_at)
         self.key = saved["key"]
 
+    def update(self, data: dict):
+        """Updates the record in the database with the provided data."""
+        for k, v in data.items():
+            if k in self.__dict__:
+                setattr(self, k, v)
+        self.save()
+
     def delete(self):
         """Delete the open object from the database. The object will still exist in
         python, but will be deleted from the database and the key attribute will be
@@ -211,3 +241,7 @@ class DetaModel(BaseDetaModel, metaclass=DetaModelMetaClass):
             raise DetaError("Item does not have key for deletion")
         self.delete_key(self.key)
         self.key = None
+
+    def get_attribute_value(self, index=1):
+        d = self.__dict__
+        return d[list(d.keys())[index]]

@@ -1,17 +1,16 @@
 {{% extends 'static_pages/templates/_base.html' %}}
 
-{{% block page_title %}} | {Obj} | Dashboard{{% endblock %}}
+{{% block page_title %}}User Dashboard | {{% endblock %}}
 {{% block meta_description %}}User logged in dashboard.{{% endblock %}}
 
 {{% block content %}}
 
-<div class="container clearnav">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    Welcome home! You're logged in as {{{{user.email}}}}.<br> 
-                    Your account was created {{{{user.created_date}}}} <br>
+                    You're logged in as {{{{user.username}}}}.<br> 
                     <a href="/{obj}/logout">Logout</a>
                 </div>
             </div>
